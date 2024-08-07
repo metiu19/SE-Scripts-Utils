@@ -18,7 +18,6 @@ using VRage.Game.ModAPI.Ingame.Utilities;
 using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
 
-
 namespace IngameScript
 {
     partial class Program
@@ -28,8 +27,8 @@ namespace IngameScript
             private readonly Program _program;
             private readonly string _title;
             private readonly string _version;
-            private StringBuilder _errors = new StringBuilder();
-            private IMyTextSurface _surface;
+            private readonly StringBuilder _errors = new StringBuilder();
+            private readonly IMyTextSurface _surface;
 
 
             /// <summary>
@@ -49,6 +48,7 @@ namespace IngameScript
             /// To reset errors see <see cref="ResetErrors"/>
             /// </summary>
             public Func<bool> PrintErrorsLogic;
+
 
 
             /// <summary>
@@ -118,6 +118,7 @@ namespace IngameScript
                 Count = 0;
                 return true;
             }
+
             /// <summary>
             /// Internal Method to register an error, used by this class and child classes
             /// </summary>
@@ -218,23 +219,6 @@ namespace IngameScript
             /// <param name="key">Expected Key</param>
             public void AddIniMissingKey(string blockName, string section, string key) =>
                 RegisterError($"[ERR_INI_MISS_KEY] Could not find key '{key}'\nExpected in section [{section}] of block '{blockName}'");
-        }
-
-        public class SMSErrorsManager : ErrorsManager
-        {
-            /// <inheritdoc/>
-            /// <param name="program"></param>
-            public SMSErrorsManager(Program program) : base(program) { }
-            /// <inheritdoc/>
-            /// <param name="program">Program instance</param>
-            /// <param name="surface">Surface to write err messages to</param>
-            public SMSErrorsManager(Program program, IMyTextSurface surface) : base(program, surface) { }
-            /// <inheritdoc/>
-            /// <param name="program">Program instace</param>
-            /// <param name="provider">Surface Provider of output screen</param>
-            /// <param name="index">Surface Index</param>
-            public SMSErrorsManager(Program program, IMyTextSurfaceProvider provider, int index = 0) : base(program, provider, index) { }
-
         }
     }
 }
