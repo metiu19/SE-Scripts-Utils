@@ -11,3 +11,6 @@ Manage the output of errors
 ## Screen Manager
 
 Screen managemnt utils
+
+## Screen Logger
+Logger class based on Screen Manager

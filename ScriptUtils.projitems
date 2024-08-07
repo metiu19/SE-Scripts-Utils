@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ErrorsManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScreenLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScreenManager.cs" />
   </ItemGroup>
 </Project>
