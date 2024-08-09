@@ -29,6 +29,7 @@ namespace IngameScript
             private readonly string _version;
             private readonly string _subTitle;
             private readonly IMyTextSurface _surface;
+            private float _width;
 
 
             /// <summary>
@@ -119,6 +120,7 @@ namespace IngameScript
                 _surface.BackgroundColor = Color.Black;
                 _surface.FontColor = Color.White;
                 _surface.FontSize = 0.8f;
+                _width = _surface.SurfaceSize.X;
                 ClearScreen();
             }
 
@@ -133,8 +135,16 @@ namespace IngameScript
             /// Append <paramref name="text"/> to the content already on screen.
             /// </summary>
             /// <param name="text">String to append</param>
-            public void AppendLine(string text) =>
-                _surface?.WriteText($"{text}\n", true);
+            public void AppendLine(string text)
+            {
+                if (_surface == null)
+                    return;
+                StringBuilder sb = new StringBuilder(text);
+                float len = _surface.MeasureStringInPixels(sb, Font, FontSize).X;
+                if (len > _width)
+                    sb.Insert(sb.Length*3/4, "\n");
+                _surface.WriteText($"{sb}\n", true);
+            }
 
             /// <summary>
             /// Clears the screen and wirte the given <paramref name="text"/>
