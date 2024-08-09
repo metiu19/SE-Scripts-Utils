@@ -58,8 +58,8 @@ namespace IngameScript
             public ErrorsManager(Program program)
             {
                 _program = program;
-                _title = program.Title;
-                _version = program.Version;
+                _title = _program.Title;
+                _version = _program.Version;
                 _surface = _program.Me.GetSurface(0);
                 _surface.ContentType = ContentType.TEXT_AND_IMAGE;
                 _surface.BackgroundColor = Color.Black;
