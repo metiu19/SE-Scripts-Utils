@@ -174,6 +174,9 @@ namespace IngameScript
             public void AddGenericError(string error) =>
                 RegisterError($"[ERR_GEN] {error}");
 
+            public void AddNotImplementedError(string methodName) =>
+                RegisterError($"[ERR_MTH_NIMP] Method {methodName} not yet implemented!");
+
             /// <summary>
             /// Register a block not found error
             /// </summary>
