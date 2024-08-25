@@ -25,6 +25,8 @@ namespace IngameScript
         public class ScreenLogger : ScreenManager
         {
             private const float _fontSize = 0.5f;
+            public bool Debug { get; set; } = false;
+
             public ScreenLogger(Program program, string subTitle, IMyTextSurface surface) : base(program, subTitle, surface)
             {
                 FontSize = _fontSize;
@@ -33,6 +35,11 @@ namespace IngameScript
             public ScreenLogger(Program program, string subTitle, IMyTextSurfaceProvider provider, int surfaceIndex = 0) : base(program, subTitle, provider, surfaceIndex)
             {
                 FontSize = _fontSize;
+            }
+
+            public void LogDebug(string message) {
+                if (Debug)
+                    AppendLine($"[DEBUG] {message}");
             }
 
             public void LogInfo(string message) =>
