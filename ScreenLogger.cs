@@ -45,7 +45,7 @@ namespace IngameScript
             public void LogInfo(string message) =>
                 AppendLine($"[INFO] {message}");
 
-            public void LogWaring(string message) =>
+            public void LogWarning(string message) =>
                 AppendLine($"[WARN] {message}");
 
             public void LogError(string message) =>
