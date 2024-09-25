@@ -53,6 +53,12 @@ namespace IngameScript
 
             public void LogCritical(string message) =>
                 AppendLine($"[CRT] {message}");
+
+            public void LogFatal(string message)
+            {
+                throw new Exception($"[FTL] {message}");
+            }
+                
         }
     }
 }
