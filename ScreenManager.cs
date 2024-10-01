@@ -24,11 +24,11 @@ namespace IngameScript
     {
         public class ScreenManager
         {
-            private readonly Program _program;
             private readonly string _title;
             private readonly string _version;
             private readonly string _subTitle;
             private readonly IMyTextSurface _surface;
+            private readonly StringBuilder _sb = new StringBuilder();
             private float _width;
 
 
@@ -80,16 +80,16 @@ namespace IngameScript
 
 
             /// <summary>
-            /// 
+            /// Text based screens utility class
             /// </summary>
-            /// <param name="program">Program instance</param>
+            /// <param name="title">Script name</param>
+            /// <param name="version">Script version</param>
             /// <param name="subTitle">Screen specific subtitle</param>
             /// <param name="surface">Surface to manage</param>
-            public ScreenManager(Program program, string subTitle, IMyTextSurface surface)
+            public ScreenManager(string title, string version, string subTitle, IMyTextSurface surface)
             {
-                _program = program;
-                _title = _program.Title;
-                _version = _program.Version;
+                _title = title;
+                _version = version;
                 _subTitle = subTitle;
                 _surface = surface;
                 if (_surface != null)
@@ -97,17 +97,17 @@ namespace IngameScript
             }
 
             /// <summary>
-            /// 
+            /// Text based screens utility class
             /// </summary>
-            /// <param name="program">Program instace</param>
+            /// <param name="title">Script name</param>
+            /// <param name="version">Script version</param>
             /// <param name="subTitle">Screen specific subtitle</param>
             /// <param name="surfaceProvider">Block providing the surface to write on</param>
             /// <param name="surfaceIndex">Surface index</param>
-            public ScreenManager(Program program, string subTitle, IMyTextSurfaceProvider surfaceProvider, int surfaceIndex = 0)
+            public ScreenManager(string title, string version, string subTitle, IMyTextSurfaceProvider surfaceProvider, int surfaceIndex = 0)
             {
-                _program = program;
-                _title = _program.Title;
-                _version = _program.Version;
+                _title = title;
+                _version = version;
                 _subTitle = subTitle;
                 _surface = surfaceProvider?.GetSurface(surfaceIndex);
                 if (_surface != null)
@@ -126,34 +126,97 @@ namespace IngameScript
 
 
             /// <summary>
-            /// Clear screen content and write default title
+            /// Clears screen content and write default header
             /// </summary>
-            public void ClearScreen() =>
-                _surface?.WriteText($"{_title} {_version} - {DateTime.Now:HH:mm:ss} - {_subTitle}\n");
-
-            /// <summary>
-            /// Append <paramref name="text"/> to the content already on screen.
-            /// </summary>
-            /// <param name="text">String to append</param>
-            public void AppendLine(string text)
+            public void ClearScreen()
             {
                 if (_surface == null)
                     return;
-                StringBuilder sb = new StringBuilder(text);
-                float len = _surface.MeasureStringInPixels(sb, Font, FontSize).X;
-                if (len > _width)
-                    sb.Insert(sb.Length*3/4, "\n");
-                _surface.WriteText($"{sb}\n", true);
+
+                _surface?.WriteText($"{_title} {_version} - {DateTime.Now:HH:mm:ss} - {_subTitle}\n");
             }
 
             /// <summary>
-            /// Clears the screen and wirte the given <paramref name="text"/>
+            /// <para>Clears the screen and writes the given <paramref name="text"/></para>
+            /// <para>IMPORTANT: Does not print header!</para>
             /// </summary>
             /// <param name="text">Text to print</param>
             public void OverwriteContent(string text)
             {
-                ClearScreen();
-                AppendLine(text);
+                if (_surface == null)
+                    return;
+
+                _surface.WriteText($"{text}\n", false);
+            }
+
+            /// <summary>
+            /// Appends <paramref name="text"/> to the content already on screen.
+            /// </summary>
+            /// <param name="text">Text to append</param>
+            public void AddContent(string text)
+            {
+                if (_surface == null)
+                    return;
+                _surface.WriteText($"{text}\n", true);
+            }
+
+            /// <summary>
+            /// <para>Appends <paramref name="text"/> to the content already on screen.</para>
+            /// <para>IMPORTANT: If the <paramref name="text"/> is too long it gets splitted</para>
+            /// </summary>
+            /// <param name="text">Text to append</param>
+            public void AppendLine(string text)
+            {
+                if (_surface == null)
+                    return;
+
+                _sb.Clear();
+                _sb.Append(text);
+                float len = _surface.MeasureStringInPixels(_sb, Font, FontSize).X;
+                if (len > _width)
+                    _sb.Insert(_sb.Length * 3 / 4, "\n");
+                _surface.WriteText($"{_sb}\n", true);
+            }
+
+            /// <summary>
+            /// <para>Appends <paramref name="text"/> to the content already on screen.</para>
+            /// <para>IMPORTANT: If the <paramref name="text"/> is too long it gets splitted</para>
+            /// </summary>
+            /// <param name="text">Text to append</param>
+            public void AppendLine(StringBuilder sb)
+            {
+                if (_surface == null)
+                    return;
+
+                float len = _surface.MeasureStringInPixels(sb, Font, FontSize).X;
+                if (len > _width)
+                    _sb.Insert(_sb.Length * 3 / 4, "\n");
+                _surface.WriteText($"{sb}\n", true);
+            }
+
+            /// <summary>
+            /// Checks if a given <paramref name="text"/> fits in the screen
+            /// </summary>
+            /// <param name="text">Text to check</param>
+            /// <returns><see cref="true"/> if <paramref name="text"/> fits, <see cref="false"/> otherwise</returns>
+            public bool CheckIfTextFits(string text)
+            {
+                _sb.Clear();
+                _sb.Append(text);
+                float len = _surface.MeasureStringInPixels(_sb, Font, FontSize).X;
+                return len < _width;
+            }
+
+            /// <summary>
+            /// <para>Checks if a given <paramref name="text"/> fits in the screen</para>
+            /// <para>Use provided <see cref="StringBuilder"/> instead of an internal one to save on conversions</para>
+            /// </summary>
+            /// <param name="text">Text to check</param>
+            /// <returns><see cref="true"/> if <paramref name="text"/> fits, <see cref="false"/> otherwise</returns>
+            public bool CheckIfTextFits(StringBuilder sb)
+            {
+                float len = _surface.MeasureStringInPixels(sb, Font, FontSize).X;
+                return len < _width;
             }
         }
     }
